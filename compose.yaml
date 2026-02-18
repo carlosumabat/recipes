@@ -1,0 +1,15 @@
+services:
+  postgresql:
+    environment:
+      POSTGRES_DB: recipes
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pw
+    image: postgres:18.0-alpine
+    ports:
+      - 5433:5432
+    restart: unless-stopped
+    volumes:
+      - database:/var/lib/postgresql/data
+
+volumes:
+  database:
