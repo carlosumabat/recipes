@@ -1,0 +1,168 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260221-001-001-create-recipe-table
+      author: sumabat.johncarlo@gmail.com
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: recipe
+      changes:
+        - createTable:
+            tableName: recipe
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_recipe_id
+              - column:
+                  name: title
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: servings
+                  type: INTEGER
+              - column:
+                  name: is_vegetarian
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: instructions
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: recipe
+
+  - changeSet:
+      id: 20260221-001-002-create-citext-extension
+      author: sumabat.johncarlo@gmail.com
+      changes:
+        - sql: |
+            CREATE EXTENSION IF NOT EXISTS citext;
+      rollback:
+
+  - changeSet:
+      id: 20260221-001-003-create-ingredient-table
+      author: sumabat.johncarlo@gmail.com
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: ingredient
+      changes:
+        - createTable:
+            tableName: ingredient
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_ingredient_id
+              - column:
+                  name: name
+                  type: CITEXT
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uk_ingredient_name
+      rollback:
+        - dropTable:
+            tableName: ingredient
+
+  - changeSet:
+      id: 20260221-001-004-create-recipe-ingredient-table
+      author: sumabat.johncarlo@gmail.com
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: recipe_ingredient
+      changes:
+        - createTable:
+            tableName: recipe_ingredient
+            columns:
+              - column:
+                  name: recipe_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ingredient_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: TEXT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: recipe_ingredient
+            columnNames: ingredient_id, recipe_id
+            constraintName: pk_recipe_ingredient_ingredient_recipe
+      rollback:
+        - dropTable:
+            tableName: recipe_ingredient
+
+  - changeSet:
+      id: 20260221-001-005-add-fk-recipe-ingredient-to-recipe
+      author: sumabat.johncarlo@gmail.com
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: recipe_ingredient
+          - tableExists:
+              tableName: recipe
+          - not:
+              - foreignKeyConstraintExists:
+                  foreignKeyName: fk_recipe_ingredient_recipe
+              - foreignKeyConstraintExists:
+                  foreignKeyName: fk_recipe_ingredient_ingredient
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: recipe_ingredient
+            baseColumnNames: recipe_id
+            referencedTableName: recipe
+            referencedColumnNames: id
+            constraintName: fk_recipe_ingredient_recipe
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: recipe_ingredient
+            baseColumnNames: ingredient_id
+            referencedTableName: ingredient
+            referencedColumnNames: id
+            constraintName: fk_recipe_ingredient_ingredient
+            onDelete: CASCADE
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: recipe_ingredient
+            constraintName: fk_recipe_ingredient_recipe
+        - dropForeignKeyConstraint:
+            baseTableName: recipe_ingredient
+            constraintName: fk_recipe_ingredient_ingredient
+
