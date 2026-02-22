@@ -85,12 +85,11 @@ source env.sh # in case you're on a new shell
 - Input validation
   - Character restrictions in input validation (prevent unusual characters)
 - Search
-  - Customizable servings filter (e.g., filter for recipes that serve between 1 and 3 people, or at least 4 people)
+  - Customizable servings filter (e.g., filter for "recipes that serve between 1 and 3 people", or "at least 4 people")
   - Use `websearch_to_tsquery` in instructions content search
 - Recipes
-  - Remove `recipe_ingredient` table and denormalize `recipe` table by adding a `TEXT[] ingredients` column
+  - Denormalize `recipe` table by adding a `TEXT[] ingredients` column
 - Ingredients
-  - Use cursor-based pagination
   - Implement quantities
     - Implement units (cup, piece, slice) and pluralization
 - Vegetarian status
@@ -98,4 +97,4 @@ source env.sh # in case you're on a new shell
 - Spring Security
   - Require authentication before granting API access
 - Controller
-  - Use OpenAPI generator to enable contract-first development
+  - Use OpenAPI Generator to enable contract-first development
