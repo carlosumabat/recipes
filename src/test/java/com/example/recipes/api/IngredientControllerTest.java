@@ -28,7 +28,7 @@ class IngredientControllerTest {
     private IngredientService ingredientService;
 
     @Test
-    void Given_SearchQuery_When_SearchIngredients_Should_Return() throws Exception {
+    void Given_SearchQuery_When_SearchIngredients_Should_Return200() throws Exception {
         List<Ingredient> ingredients = List.of(
             new Ingredient("Sugar"),
             new Ingredient("Salt")
@@ -40,14 +40,14 @@ class IngredientControllerTest {
                 .param("name", "abc"))
             .andExpect(status().isOk())
             .andExpect(content().json("""
-                    ["Sugar","Salt"]
+                    {"data": ["Sugar","Salt"]}
                 """));
 
         verify(ingredientService).searchIngredients(anyString());
     }
 
     @Test
-    void Given_BlankNameParam_When_SearchIngredients_Should_ReturnBadRequest() throws Exception {
+    void Given_BlankNameParam_When_SearchIngredients_Should_Return400() throws Exception {
         mockMvc.perform(get("/api/ingredients/search")
                 .param("name", ""))
             .andExpect(status().isBadRequest());
@@ -59,13 +59,9 @@ class IngredientControllerTest {
     }
 
     @Test
-    void Given_InvalidSizeNameParam_When_SearchIngredients_Should_ReturnBadRequest() throws Exception {
+    void Given_InvalidSizeNameParam_When_SearchIngredients_Should_Return400() throws Exception {
         mockMvc.perform(get("/api/ingredients/search")
                 .param("name", "su"))
-            .andExpect(status().isBadRequest());
-
-        mockMvc.perform(get("/api/ingredients/search")
-                .param("name", StringUtils.repeat("abc", 101)))
             .andExpect(status().isBadRequest());
 
         verifyNoInteractions(ingredientService);

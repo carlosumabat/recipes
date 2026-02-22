@@ -24,7 +24,15 @@ databaseChangeLog:
             indexName: idx_recipe_title
 
   - changeSet:
-      id: 20260221-002-002-create-recipe-instructions-fulltext-search-index
+      id: 20260221-002-002-create-pg_trgm-extension
+      author: sumabat.johncarlo@gmail.com
+      changes:
+        - sql: |
+            CREATE EXTENSION IF NOT EXISTS pg_trgm;
+      rollback:
+
+  - changeSet:
+      id: 20260221-002-003-create-ingredient-name-index-trigram
       author: sumabat.johncarlo@gmail.com
       preConditions:
         onFail: MARK_RAN
@@ -34,36 +42,13 @@ databaseChangeLog:
           - not:
               indexExists:
                 tableName: recipe
-                indexName: idx_recipe_instructions_fts
+                indexName: idx_ingredient_name_trgm
       changes:
         - sql: |
-            CREATE INDEX idx_recipe_instructions_fts
-            ON recipe
-            USING GIN (
-              to_tsvector(
-                'english',
-                coalesce(title,'') || ' ' || coalesce(instructions,'')
-              )
-            );
+            CREATE INDEX idx_ingredient_name_trgm
+              ON ingredient 
+              USING gin ("name" gin_trgm_ops);
       rollback:
         - dropIndex:
             tableName: recipe
-            indexName: idx_recipe_instructions_fts
-
-  - changeSet:
-      id: 20260221-002-003-create-pg_trgm-extension
-      author: sumabat.johncarlo@gmail.com
-      changes:
-        - sql: |
-            CREATE EXTENSION IF NOT EXISTS pg_trgm;
-      rollback:
-
-  - changeSet:
-      id: 20260221-002-004-create-trigram-indexes
-      author: sumabat.johncarlo@gmail.com
-      changes:
-        - sql:
-            sql: |
-              CREATE INDEX idx_ingredient_name_trgm
-                ON ingredient 
-                USING gin ("name" gin_trgm_ops);
+            indexName: idx_ingredient_name_trgm

@@ -11,25 +11,34 @@ docker compose up -d
 source env.sh
 ```
 
-- Install dependencies
+- Install dependencies and run tests
 ```bash
 ./mvnw clean install
 ```
 
 - Run database migrations
 ```bash
-liquibase \
-  --classpath=src/main/resources \
-  --changelog-file=src/main/resources/db.changelog/db.changelog-master.yaml \
-  --url="$SPRING_DATASOURCE_URL" \
-  --username="$SPRING_DATASOURCE_USERNAME" \
-  --password="$SPRING_DATASOURCE_PASSWORD" \
-  update
+./mvnw liquibase:update \
+-Dliquibase.url="$SPRING_DATASOURCE_URL" \
+-Dliquibase.username="$SPRING_DATASOURCE_USERNAME" \
+-Dliquibase.password="$SPRING_DATASOURCE_PASSWORD" \
+-Dliquibase.changeLogFile=src/main/resources/db/db.changelog-master.yaml
 ```
 
-## Then, run the application!
+- Populate the database
+```bash
+cat src/main/resources/db/init/init_ingredients.sql \
+| docker exec -i recipes-postgresql-1 psql -U user -d recipes
+```
+
+## Run the application
 ```bash
 ./mvnw spring-boot:run
+```
+
+- To populate the `recipe` table for the first time, run:
+```bash
+./init-recipes.sh
 ```
 
 # Export the API to a Postman Collection
@@ -37,5 +46,40 @@ liquibase \
 
 # Design Decisions
 - Externalized Configuration - 
-- OpenAPI Generator
 - Layered Architecture
+- Use of TEXT datatype
+- Use of JPA Specifications
+- Indexing for scaling
+- Exception handler
+- Parameter object for Controller
+- TDD
+
+# Assumptions
+- Servings
+  - Integer showing number of people served, not yield
+- Ingredients
+  - Names are unique
+- Filtering
+  - Different filters joined by AND condition
+  - Ingredient cannot be both included and excluded
+- Vegetarian
+  - Recipe-level, not ingredient-level
+
+# Improvement Ideas
+- Input validation
+  - Character restrictions
+- Search
+  - Ranged search for servings
+  - Use websearch_to_tsquery in instructions search
+- Recipes
+  - Remove `recipe_ingredient` table
+- Ingredients
+  - Use cursor-based pagination and implement partial search with trigram index
+  - Implement pluralization in DTO
+  - Implement units (cup, piece, slice)
+- Vegetarian status
+  - Use as part of a tag system
+- Spring Security
+- Controller
+  - Use OpenAPI generator
+- Tests for pagination

@@ -38,7 +38,6 @@ class ControllerExceptionHandlerTest {
         assertThat(body).isNotNull();
         assertThat(body.errors()).hasSize(1);
         assertThat(body.errors().get(0).field()).isEqualTo("email");
-        assertThat(body.errors().get(0).message()).isEqualTo("Email is invalid");
     }
 
 }

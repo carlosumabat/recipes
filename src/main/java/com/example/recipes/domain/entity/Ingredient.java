@@ -9,16 +9,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Type;
 
 @Getter
 @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "ingredient")
 @NoArgsConstructor
+@BatchSize(size = 25)
 public class Ingredient {
 
     public Ingredient(String name) {
@@ -29,6 +33,7 @@ public class Ingredient {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, updatable = false)
     @Setter(AccessLevel.NONE)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Type(PostgreSQLCITextType.class)

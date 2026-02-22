@@ -9,3 +9,4 @@ export SPRING_APPLICATION_JSON='{
 }'
 
 export SPRING_OUTPUT_ANSI_ENABLED=ALWAYS
+export API_BASE_URL=http://localhost:8080

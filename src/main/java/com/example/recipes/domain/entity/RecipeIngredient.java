@@ -8,12 +8,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "recipe_ingredient")
 public class RecipeIngredient {
 
     @EmbeddedId
+    @EqualsAndHashCode.Include
     private RecipeIngredientId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,5 +36,4 @@ public class RecipeIngredient {
     @Column(name = "quantity", nullable = false)
     private String quantity;
 
-    // getters, setters, equals, hashCode
 }

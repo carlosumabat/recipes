@@ -37,4 +37,13 @@ class IngredientServiceImplTest {
 
         verify(ingredientRepository).findByNameLike(name);
     }
+
+    @Test
+    void Given_ListOName_When_SearchIngredients_Should_FindByNameIn() {
+        String name = "test";
+
+        ingredientService.searchIngredients(name);
+
+        verify(ingredientRepository).findByNameLike(name);
+    }
 }

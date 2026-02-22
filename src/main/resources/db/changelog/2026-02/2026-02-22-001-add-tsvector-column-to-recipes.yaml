@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260222-001-001-create-recipe-search-vector-column
+      author: sumabat.johncarlo@gmail.com
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: recipe
+          - not:
+              columnExists:
+                tableName: recipe
+                columnName: search_vector
+      changes:
+        - sql: |
+            ALTER TABLE recipe
+            ADD COLUMN search_vector tsvector GENERATED ALWAYS AS (
+              to_tsvector('english', coalesce(title,'') || ' ' || coalesce(instructions,''))
+            ) STORED;
+
+      rollback:
+        - dropColumn:
+            columnName: search_vector
+            tableName: recipe
+
+  - changeSet:
+      id: 20260222-001-002-create-recipe-search-vector-index-gin
+      author: sumabat.johncarlo@gmail.com
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: recipe
+          - not:
+              indexExists:
+                tableName: recipe
+                indexName: idx_recipe_search_gin
+      changes:
+        - sql: |
+            CREATE INDEX idx_recipe_search_gin
+              ON recipe 
+              USING gin (search_vector);
+      rollback:
+        - dropIndex:
+            tableName: recipe
+            indexName: idx_recipe_search_gin

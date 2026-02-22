@@ -5,4 +5,6 @@ import java.util.List;
 
 public interface IngredientService {
     List<Ingredient> searchIngredients(String name);
+
+    List<Ingredient> getIngredients(List<String> names);
 }
