@@ -1,7 +1,7 @@
 package com.example.recipes.api.validator;
 
 import com.example.recipes.api.dto.RecipeRequestBody;
-import com.example.recipes.api.shared.ApiExceptions;
+import com.example.recipes.api.exception.ApiExceptions;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

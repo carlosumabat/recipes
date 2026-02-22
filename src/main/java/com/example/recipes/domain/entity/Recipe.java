@@ -20,9 +20,9 @@ import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.generator.EventType;
 
 @Getter
 @Setter
@@ -69,7 +69,7 @@ public class Recipe {
 
     @Type(PostgreSQLTSVectorType.class)
     @Column(name = "search_vector", columnDefinition = "tsvector", nullable = false, updatable = false)
-    @Generated(GenerationTime.ALWAYS)
+    @Generated(event = {EventType.INSERT, EventType.UPDATE})
     @Setter(AccessLevel.NONE)
     private String searchVector;
 }

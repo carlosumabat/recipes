@@ -5,7 +5,7 @@ import com.example.recipes.api.dto.RecipeDto;
 import com.example.recipes.api.dto.RecipeListDto;
 import com.example.recipes.api.dto.RecipeRequestBody;
 import com.example.recipes.api.dto.RecipeSearchParams;
-import com.example.recipes.api.shared.ApiExceptions;
+import com.example.recipes.api.exception.ApiExceptions;
 import com.example.recipes.api.validator.IngredientFilterValidator;
 import com.example.recipes.api.validator.RecipeRequestBodyValidator;
 import com.example.recipes.application.RecipeService;

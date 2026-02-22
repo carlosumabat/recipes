@@ -1,4 +1,4 @@
-package com.example.recipes.api.shared;
+package com.example.recipes.api.exception;
 
 public record ClientError(
     String field,
